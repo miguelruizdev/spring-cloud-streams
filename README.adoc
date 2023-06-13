@@ -1,0 +1,30 @@
+=== Spring Cloud Stream Prototype
+
+This sample showcases Spring Cloud Stream capabilities using three applications with different features:
+
+* source: Publishes a name as a String at regular intervals to initiate the stream.
+* processor: Consumes the String from name-source, transforms it (e.g., adds a timestamp), and publishes the result to a different exchange.
+* sink: Consumes results from name-processor and performs an action, such as printing to standard output.
+
+These applications' names align with Spring Cloud Stream concepts (Source, Processor, Sink), which map to Java 8 functions (Supplier, Function, Consumer).
+
+=== Install Prerequisite - RabbitMQ
+
+To use Spring Cloud Stream functionality, we need to ensure that a message broker is accessible. For this guide, we use RabbitMQ.
+If a local Docker environment is found, the following command can start RabbitMQ:
+```shell
+docker run -d --hostname my-rabbit --name some-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management
+```
+
+The result is that RabbitMQ should be link:http://localhost:15672/[accessible locally] with the username/password of `guest/guest`.
+
+=== Polling Interval for Spring Cloud Stream Supplier
+
+In Spring Cloud Stream, a `Supplier` serves as a data source for message channels, often linked to external message brokers like RabbitMQ or Apache Kafka.
+By default, the framework link:https://github.com/spring-cloud/spring-cloud-stream/blob/3.1.x/spring-cloud-stream/src/main/java/org/springframework/cloud/stream/config/DefaultPollerProperties.java[continuously polls] the `Supplier`'s `get()` method to fetch and send messages, supporting event-driven and stream processing.
+You can control the polling interval by configuring `spring.cloud.stream.poller.fixed-delay` in your application's settings.
+To change the interval to 5 seconds, add the following to your `application.properties` or `application.yml` file:
+
+```
+spring.cloud.stream.poller.fixed-delay=5000
+```
